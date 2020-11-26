@@ -8,13 +8,16 @@
 
     Description: Добавить пользователя в БД
 
-    Return value: null
+    Return value: int ($user_id)
 */
 function add_user($pdo, $email, $password)
 {
     $sql = "INSERT INTO users (email, password) VALUES (:email, :password)";
     $statement = $pdo->prepare($sql);
     $statement->execute(["email" => $email, "password" => $password]);
+
+    $user_id = get_user_id_by_email($pdo, $email);
+    return $user_id;
 }
 
 /*
@@ -31,7 +34,7 @@ function get_user_id_by_email($pdo, $email)
     $sql = "SELECT id FROM users WHERE email = :email";
     $statement = $pdo->prepare($sql);
     $statement->execute(["email" => $email]);
-    $user_id = $statement->fetchAll(PDO::FETCH_ASSOC);
+    $user_id = $statement->fetch(PDO::FETCH_ASSOC);
 
     return $user_id;
 }
@@ -230,4 +233,113 @@ function show_user($user)
         </div>
     </div>
     </div>";
+}
+
+/*
+    Parameters:
+        PDO - $pdo
+        int - $id
+        string - $job
+        string - $phone
+        string - $address
+
+    Description: редактировать общую информацию пользователя в базе
+
+    Return value: null
+*/
+function edit_information($pdo, $id, $job, $phone, $address, $username)
+{
+    $sql = "UPDATE users SET job = :job, phone = :phone, address = :address, name = :username, role = :role WHERE id = :id";
+    $statement = $pdo->prepare($sql);
+    $statement->execute([
+        "job" => $job,
+        "phone" => $phone,
+        "address" => $address,
+        "id" => $id,
+        "username" => $username,
+        "role" => "user"
+        ]);    
+}
+
+/*
+    Parameters:
+        PDO - $pdo
+        int - $id
+        string - $status
+
+    Description: установить статус пользователя
+
+    Return value: null
+*/
+function set_status($pdo, $id, $status)
+{
+    $status_to_tag = [
+        "Онлайн" => "success",
+        "Отошел" => "warning",
+        "Не беспокоить" => "danger",
+    ];
+
+    $sql = "UPDATE users SET status = :status WHERE id = :id";
+    $statement = $pdo->prepare($sql);
+    $statement->execute([
+        "status" => $status_to_tag[$status],
+        "id" => $id
+    ]);
+}
+
+/*
+    Parameters:
+        PDO - $pdo
+        int - $id
+        array - $file
+
+    Description: загрузить аватар пользователя
+
+    Return value: null
+*/
+function upload_avatar($pdo, $id, $file)
+{
+    $uploaddir = "D:/OSPanel/domains/divein/tasks3/img/demo/avatars/";
+    $uploadfile = $uploaddir . basename($_FILES['avatar']['name']);
+    $file_info = pathinfo($uploadfile);
+    $filename = $file_info['filename']; // имя файла без расширения
+
+    while (file_exists($uploadfile)) {
+        // подбираем уникальное имя
+        $filename = $filename . (string)random_int(0, 9);
+        $uploadfile = $uploaddir . $filename . "." . $file_info['extension'];
+    }
+
+    move_uploaded_file($_FILES['avatar']['tmp_name'], $uploadfile);
+
+    $sql = "UPDATE users SET avatar = :avatar WHERE id = :id";
+    $statement = $pdo->prepare($sql);
+    $statement->execute([
+        "avatar" => $uploadfile,
+        "id" => $id
+    ]);
+}
+
+/*
+    Parameters:
+        PDO - $pdo
+        int - $id
+        string - $vk
+        string - $telegram
+        string - $instagram
+
+    Description: добавить ссылки на соцсети
+
+    Return value: null
+*/
+function add_social_links($pdo, $id, $vk, $telegram, $instagram)
+{
+    $sql = "UPDATE users SET vk = :vk, telegram = :telegram, instagram = :instagram WHERE id = :id";
+    $statement = $pdo->prepare($sql);
+    $statement->execute([
+        "vk" => $vk,
+        "telegram" => $telegram,
+        "instagram" => $instagram,
+        "id" => $id
+    ]);
 }
