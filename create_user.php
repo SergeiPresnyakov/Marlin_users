@@ -2,10 +2,10 @@
 session_start();
 require("functions.php");
 
+// если у пользователя нет доступа к этой странице
 if (!(isset($_SESSION['current_user']) && $_SESSION['current_user']['role'] == "admin")) {
     redirect_to("page_login.php");
 }
-
 
 ?>
 <!DOCTYPE html>
@@ -47,17 +47,20 @@ if (!(isset($_SESSION['current_user']) && $_SESSION['current_user']['role'] == "
             <h1 class="subheader-title">
                 <i class='subheader-icon fal fa-plus-circle'></i> Добавить пользователя
             </h1>
-
-
         </div>
-            <?php
 
+            <?php
+            
+            // флеш сообщения
             if (isset($_SESSION['danger'])) {
                 display_flash_message("danger");
             }
 
-            ?>
+            if (isset($_SESSION['success'])) {
+                display_flash_message("success");
+            }
 
+            ?>
 
         <form action="create.php" method="post" enctype="multipart/form-data">
             <div class="row">

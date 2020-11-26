@@ -17,7 +17,7 @@ function add_user($pdo, $email, $password)
     $statement->execute(["email" => $email, "password" => $password]);
 
     $user_id = get_user_id_by_email($pdo, $email);
-    return $user_id;
+    return $user_id['id'];
 }
 
 /*
@@ -27,7 +27,7 @@ function add_user($pdo, $email, $password)
 
     Description: Получить id пользователя по email
 
-    Return value: int (user_id)
+    Return value: array ["id" => id]
 */
 function get_user_id_by_email($pdo, $email)
 {
@@ -242,16 +242,18 @@ function show_user($user)
         string - $job
         string - $phone
         string - $address
+        string = $username
 
     Description: редактировать общую информацию пользователя в базе
 
-    Return value: null
+    Return value: boolean
 */
 function edit_information($pdo, $id, $job, $phone, $address, $username)
 {
     $sql = "UPDATE users SET job = :job, phone = :phone, address = :address, name = :username, role = :role WHERE id = :id";
     $statement = $pdo->prepare($sql);
-    $statement->execute([
+
+    return $statement->execute([
         "job" => $job,
         "phone" => $phone,
         "address" => $address,
@@ -269,7 +271,7 @@ function edit_information($pdo, $id, $job, $phone, $address, $username)
 
     Description: установить статус пользователя
 
-    Return value: null
+    Return value: boolean
 */
 function set_status($pdo, $id, $status)
 {
@@ -281,7 +283,8 @@ function set_status($pdo, $id, $status)
 
     $sql = "UPDATE users SET status = :status WHERE id = :id";
     $statement = $pdo->prepare($sql);
-    $statement->execute([
+
+    return $statement->execute([
         "status" => $status_to_tag[$status],
         "id" => $id
     ]);
@@ -295,7 +298,7 @@ function set_status($pdo, $id, $status)
 
     Description: загрузить аватар пользователя
 
-    Return value: null
+    Return value: boolean
 */
 function upload_avatar($pdo, $id, $file)
 {
@@ -314,7 +317,8 @@ function upload_avatar($pdo, $id, $file)
 
     $sql = "UPDATE users SET avatar = :avatar WHERE id = :id";
     $statement = $pdo->prepare($sql);
-    $statement->execute([
+
+    return $statement->execute([
         "avatar" => $uploadfile,
         "id" => $id
     ]);
@@ -330,13 +334,14 @@ function upload_avatar($pdo, $id, $file)
 
     Description: добавить ссылки на соцсети
 
-    Return value: null
+    Return value: boolean
 */
 function add_social_links($pdo, $id, $vk, $telegram, $instagram)
 {
     $sql = "UPDATE users SET vk = :vk, telegram = :telegram, instagram = :instagram WHERE id = :id";
     $statement = $pdo->prepare($sql);
-    $statement->execute([
+
+    return $statement->execute([
         "vk" => $vk,
         "telegram" => $telegram,
         "instagram" => $instagram,
