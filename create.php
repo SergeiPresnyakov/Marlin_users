@@ -39,6 +39,9 @@ $user_successfully_created = (
     $successful_add_social_links
 );
 
+// на всякий случай очистим POST
+$_POST = array();
+
 if ($user_successfully_created) {
     set_flash_message("success", "Пользователь успешно создан.");
     redirect_to("/tasks3/create_user.php");

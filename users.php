@@ -51,9 +51,20 @@ $all_users = get_all_users($connection);
         </nav>
 
         <main id="js-page-content" role="main" class="page-content mt-3">
-            <div class="alert alert-success">
-                Профиль успешно обновлен.
-            </div>
+            <?php
+            if (isset($_SESSION['danger'])) {
+                display_flash_message("danger");
+            }
+
+            if (isset($_SESSION["success"])) {
+                display_flash_message("success");
+            }
+
+            if (isset($_SESSION["warning"])) {
+                display_flash_message("warning");
+            }
+            ?>
+            
             <div class="subheader">
                 <h1 class="subheader-title">
                     <i class='subheader-icon fal fa-users'></i> Список пользователей

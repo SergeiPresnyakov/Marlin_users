@@ -187,7 +187,7 @@ function show_user($user)
         <div class=\"card-body border-faded border-top-0 border-left-0 border-right-0 rounded-top\">
             <div class=\"d-flex flex-row align-items-center\">                
                 <span class=\"status status-{$user['status']} mr-3\">
-                    <span class=\"rounded-circle profile-image d-block \" style=\"background-image:url('{$user['photo']}'); background-size: cover;\"></span>
+                    <span class=\"rounded-circle profile-image d-block \" style=\"background-image:url('{$user['avatar']}'); background-size: cover;\"></span>
                 </span>
                 <div class=\"info-card-text flex-1\">
                     <a href=\"javascript:void(0);\" class=\"fs-xl text-truncate text-truncate-lg text-info\" data-toggle=\"dropdown\" aria-expanded=\"false\">
@@ -302,8 +302,12 @@ function set_status($pdo, $id, $status)
 */
 function upload_avatar($pdo, $id, $file)
 {
-    $uploaddir = "D:/OSPanel/domains/divein/tasks3/img/demo/avatars/";
+    $full_uploaddir = "D:/OSPanel/domains/divein/tasks3/img/demo/avatars";
+    $realative_uploaddir = "/tasks3/img/demo/avatars/";
+
+    // полный адрес для загрузки файла
     $uploadfile = $uploaddir . basename($_FILES['avatar']['name']);
+
     $file_info = pathinfo($uploadfile);
     $filename = $file_info['filename']; // имя файла без расширения
 
@@ -315,11 +319,14 @@ function upload_avatar($pdo, $id, $file)
 
     move_uploaded_file($_FILES['avatar']['tmp_name'], $uploadfile);
 
+    // относительный адрес для атрибута src аватарки
+    $realative_uploadfile_src = $realative_uploaddir . $filename . "." . $file_info['extension'];
+
     $sql = "UPDATE users SET avatar = :avatar WHERE id = :id";
     $statement = $pdo->prepare($sql);
 
     return $statement->execute([
-        "avatar" => $uploadfile,
+        "avatar" => $realative_uploadfile_src,
         "id" => $id
     ]);
 }
@@ -347,4 +354,37 @@ function add_social_links($pdo, $id, $vk, $telegram, $instagram)
         "instagram" => $instagram,
         "id" => $id
     ]);
+}
+
+/*
+    Parameters:
+        int - $current_user_id
+        int - $edit_user_id
+
+    Description: Проверка свой ли профиль редактирует пользователь
+
+    Return value: boolean
+*/
+function is_author($current_user_id, $edit_user_id)
+{
+    return $current_user_id == $edit_user_id;
+}
+
+/*
+    Parameters:
+        PDO - $pdo
+        int - $user_id
+
+    Description: Достать данные пользователя из базы по id
+
+    Return value: array
+*/
+function get_user_by_id($pdo, $user_id)
+{
+    $sql = "SELECT * FROM users WHERE id = :id";
+    $statement = $pdo->prepare($sql);
+    $statement->execute(['id' => $user_id]);
+    $user = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+    return $user[0];
 }
