@@ -49,7 +49,14 @@ $user = get_user_by_id($connection, $_GET['id']);
                 <h1 class="subheader-title">
                     <i class='subheader-icon fal fa-user'></i> <?php echo $user['name']?>
                 </h1>
+
+
             </div>
+            <?php  
+                if (isset($_SESSION["success"])) {
+                    display_flash_message("success");
+                }
+            ?>
             <div class="row">
               <div class="col-lg-6 col-xl-6 m-auto">
 
