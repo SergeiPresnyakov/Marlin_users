@@ -285,3 +285,29 @@ function edit_credentials($pdo, $id, $email, $password)
         "id" => $id
     ]);
 }
+
+/*
+    Parameters:
+        PDO - $pdo
+        int - $id
+    Description: Удалить пользователя
+    Return value: boolean
+*/
+function delete_user($pdo, $id)
+{
+    $sql = "DELETE FROM users WHERE id = :id";
+    $statement = $pdo->prepare($sql);
+
+    return $statement->execute(["id" => $id]);
+}
+
+/*
+    Parameters:
+            -
+    Description: Выйти из системы
+    Return value: null
+*/
+function logout()
+{
+    $_SESSION = array();
+}
