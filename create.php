@@ -29,7 +29,7 @@ $user_id = add_user($connection, $email, $password);
 
 $successful_edit = edit_information($connection, $user_id, $job, $phone, $address, $username);
 $successful_set_status = set_status($connection, $user_id, $status);
-$successful_upload_avatar = upload_avatar($connection, $user_id, $_FILE['avatar']);
+$successful_upload_avatar = upload_avatar($connection, $user_id, $_FILES['avatar']);
 $successful_add_social_links = add_social_links($connection, $user_id, $vk, $telegram, $instagram);
 
 $user_successfully_created = (

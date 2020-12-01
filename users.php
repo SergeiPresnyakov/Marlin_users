@@ -41,7 +41,7 @@ $all_users = get_all_users($connection);
                 </ul>
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="page_login.html">Войти</a>
+                        <a class="nav-link" href="page_login.php">Войти</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">Выйти</a>
@@ -75,7 +75,7 @@ $all_users = get_all_users($connection);
 
                     <!--Кнопка "Добавить" только для админа -->
                     <?php if ($_SESSION['current_user']['role'] === "admin"):?>
-                    <a class="btn btn-success" href="create_user.html">Добавить</a>
+                    <a class="btn btn-success" href="create_user.php">Добавить</a>
                     <?php endif;?>
 
                     <div class="border-faded bg-faded p-3 mb-g d-flex mt-3">
@@ -96,9 +96,15 @@ $all_users = get_all_users($connection);
             <div class="row" id="js-contacts">
 
                 <?php foreach ($all_users as $user):?>
+                <?php 
+                    // можно ли пользователю видеть опции
+                    $allow_to_see_options = $_SESSION['current_user']['id'] == $user['id'] || $_SESSION['current_user']['role'] == 'admin';
 
-                <!-- Условие того, можно ли пользователю видеть опции -->
-                <?php $allow_to_see_options = $_SESSION['current_user']['id'] == $user['id'] || $_SESSION['current_user']['role'] == 'admin';?>
+                    // если аватар не назначен, то показываем заглушку
+                    if (empty($user['avatar'])) {
+                        $user['avatar'] = "/tasks3/img/demo/avatars/avatar-m.png";
+                    }
+                ?>
 
                     <div class="col-xl-4">
                     <div id="c_1" class="card border shadow-0 mb-g shadow-sm-hover" data-filter-tags="oliver kopyov">

@@ -183,22 +183,23 @@ function set_status($pdo, $id, $status)
 */
 function upload_avatar($pdo, $id, $file)
 {
-    $full_uploaddir = "D:/OSPanel/domains/divein/tasks3/img/demo/avatars";
+    $full_uploaddir = "D:/OSPanel/domains/divein/tasks3/img/demo/avatars/";
     $realative_uploaddir = "/tasks3/img/demo/avatars/";
 
     // полный адрес для загрузки файла
-    $uploadfile = $full_uploaddir . basename($_FILES['avatar']['name']);
+    $uploadfile = $full_uploaddir . basename($file['name']);
+    
 
     $file_info = pathinfo($uploadfile);
     $filename = $file_info['filename']; // имя файла без расширения
-
+    
     while (file_exists($uploadfile)) {
         // подбираем уникальное имя
         $filename = $filename . (string)random_int(0, 9);
         $uploadfile = $full_uploaddir . $filename . "." . $file_info['extension'];
     }
 
-    move_uploaded_file($_FILES['avatar']['tmp_name'], $uploadfile);
+    move_uploaded_file($file['tmp_name'], $uploadfile);
 
     // относительный адрес для атрибута src аватарки
     $realative_uploadfile_src = $realative_uploaddir . $filename . "." . $file_info['extension'];
