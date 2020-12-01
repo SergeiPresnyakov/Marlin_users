@@ -158,7 +158,7 @@ function edit_information($pdo, $id, $job, $phone, $address, $username)
 */
 function set_status($pdo, $id, $status)
 {
-    $status_to_tag = [
+    $status_to_class = [
         "Онлайн" => "success",
         "Отошел" => "warning",
         "Не беспокоить" => "danger",
@@ -168,7 +168,7 @@ function set_status($pdo, $id, $status)
     $statement = $pdo->prepare($sql);
 
     return $statement->execute([
-        "status" => $status_to_tag[$status],
+        "status" => $status_to_class[$status],
         "id" => $id
     ]);
 }
